@@ -9,7 +9,7 @@ console.log(output);
 
 const text = "Hello World";
 
-fs.writeFileSync("./module-2/write-async.txt", "Hi Developers!", (err) => {
+fs.writeFileSync("./module-2/write-a.txt", "Hi Developers!", (err) => {
 	if (err) {
 		throw new Error("Error");
 	}
