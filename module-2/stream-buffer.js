@@ -12,6 +12,9 @@ const fs = require("fs");
 //    });
 // });
 
+// create a writeable streaming
+const writeableStream = fs.createWriteStream(__dirname + "/hello-write.txt");
+
 // create a readable streaming
 
 const readableStream = fs.createReadStream(__dirname + "/hello.txt", "utf-8");
@@ -19,16 +22,24 @@ const readableStream = fs.createReadStream(__dirname + "/hello.txt", "utf-8");
 readableStream.on("data", (data) => {
 	console.log(data);
 
-	// create a writeable streaming
-	const writeableStream = fs.createWriteStream(
-		__dirname + "/hello-write.txt"
-	);
+	// writeableStream.write(data, (err) => {
+	// 	if (err) {
+	// 		if (err) {
+	// 			throw new Error("Error!");
+	// 		}
+	// 	}
+	// });
+	readableStream.pipe(writeableStream);
+});
 
-	writeableStream.write(data, (err) => {
-		if (err) {
-			if (err) {
-				throw new Error("Error!");
-			}
-		}
-	});
+readableStream.on("error", (error) => {
+	throw new Error(error);
+});
+
+writeableStream.on("error", (err) => {
+	throw new Error(err);
+});
+
+writeableStream.on("finish", () => {
+	console.log("Finished Writeable Stream");
 });
