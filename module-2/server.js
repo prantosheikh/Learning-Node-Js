@@ -1,7 +1,9 @@
 const http = require("http");
+const url = require("url");
 
 const posts = [
 	{
+		id: 1,
 		title: "Introduction to Machine Learning",
 		author: "Jane Smith",
 		date: "2024-04-28",
@@ -9,6 +11,7 @@ const posts = [
 			"Machine learning is a subset of artificial intelligence that focuses on the development of computer programs that can learn and improve from experience. In machine learning, algorithms are trained on data to create models that can make predictions or decisions without being explicitly programmed to perform the task.",
 	},
 	{
+		id: 2,
 		title: "The Future of Renewable Energy",
 		author: "Bob Johnson",
 		date: "2024-04-30",
@@ -16,6 +19,7 @@ const posts = [
 			"Renewable energy sources such as solar, wind, and hydroelectric power have gained significant attention in recent years due to their potential to reduce greenhouse gas emissions and mitigate climate change. With advancements in technology and decreasing costs, renewable energy is expected to play a crucial role in the transition to a more sustainable energy future.",
 	},
 	{
+		id: 3,
 		title: "Tips for Effective Time Management",
 		author: "Alice Williams",
 		date: "2024-05-01",
@@ -25,9 +29,12 @@ const posts = [
 ];
 
 const server = http.createServer((req, res) => {
-	console.log(req.url);
+	console.log(req.url, req.method);
+	const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
 
-	if (req.url === "/home" && req.method === "GET") {
+	const pathName = parsedUrl.pathname;
+
+	if (pathName === "/home" && req.method === "GET") {
 		res.writeHead(200, {
 			"Content-Type": "text/html",
 		});
@@ -95,6 +102,7 @@ const server = http.createServer((req, res) => {
 					font-weight: bold;
 				}
 		
+				
 				.btn-add-to-cart {
 					background-color: #007bff;
 					color: #fff;
@@ -127,14 +135,20 @@ const server = http.createServer((req, res) => {
 			</body>
 		</html>
 		`);
-	} else if (req.url === "/posts" && req.method === "GET") {
+	} else if (pathName === "/posts" && req.method === "GET") {
 		// res.writeHead(200, {
 		// 	"Content-Type": "application/json",
 		// 	email: "prantosheikh834@gmail.com",
 		// });
+		const query = parsedUrl.searchParams;
+		const postId = query.get("id", "id");
+
+		const expectedPost = posts.find((post) => post.id == postId);
+		console.log(expectedPost, "a");
+
 		res.setHeader("Content-Type", "application/json");
 		res.statusCode = 200;
-		res.end(JSON.stringify(posts));
+		res.end(JSON.stringify(expectedPost));
 	} else {
 		res.end("Not Found.");
 	}
